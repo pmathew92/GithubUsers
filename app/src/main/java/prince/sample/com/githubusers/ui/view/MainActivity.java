@@ -9,8 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,6 +21,7 @@ import prince.sample.com.githubusers.AppController;
 import prince.sample.com.githubusers.R;
 import prince.sample.com.githubusers.data.remote.ApiService;
 import prince.sample.com.githubusers.model.User;
+import prince.sample.com.githubusers.ui.adapter.UserListAdapter;
 import prince.sample.com.githubusers.viewmodel.MainActivityViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
     private MainActivityViewModel mViewModel;
+    private List<User> mUserList=new ArrayList<>();
+    private UserListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +47,29 @@ public class MainActivity extends AppCompatActivity {
         if(toolbar!=null)
             toolbar.setTitle(getApplicationInfo().loadLabel(getPackageManager()));
 
+        mAdapter=new UserListAdapter(this,mUserList);
+
         mSearchView.setLayoutParams(new Toolbar.LayoutParams(Gravity.END));
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
+
+        mViewModel.getUserList().observe(this,userList -> {
+            mAdapter.addData(userList);
+        });
 
         ApiService apiReqInterface = ((AppController)getApplication()).getRetrofitClient().create(ApiService.class);
 
         apiReqInterface.getUsers().enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                
+                if(response.isSuccessful()){
+                    mUserList=response.body();
+                    mAdapter.addData(mUserList);
+                }
+
             }
 
             @Override
