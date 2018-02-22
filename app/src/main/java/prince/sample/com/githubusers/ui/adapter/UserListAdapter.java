@@ -6,9 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -18,10 +21,12 @@ import prince.sample.com.githubusers.R;
 import prince.sample.com.githubusers.model.User;
 
 
-public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHolder> {
+public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHolder>
+        implements Filterable {
 
     private Context context;
-    private List<User> userList;
+    private List<User> userList=new ArrayList<>();
+    private List<User> userListFiltered=new ArrayList<>();
 
     public UserListAdapter(Context context,List<User> userList){
         this.context=context;
@@ -35,7 +40,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        User user=userList.get(position);
+        User user=userListFiltered.get(position);
         holder.mUserName.setText(user.getLogin());
         holder.mUrl.setText(user.getHtmlUrl());
         GlideApp.with(context)
@@ -47,7 +52,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return userListFiltered.size();
     }
 
     /**
@@ -56,7 +61,40 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
      */
     public void addData(List<User> userList) {
         this.userList.addAll(userList);
+        this.userListFiltered=this.userList;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                if (charString.isEmpty()) {
+                    userListFiltered = userList;
+                } else {
+                    List<User> filteredList = new ArrayList<>();
+                    for (User row : userList) {
+                        if (row.getLogin().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    userListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = userListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                userListFiltered= (List<User>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

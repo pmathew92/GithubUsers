@@ -11,6 +11,10 @@ public class RetrofitClient {
     private RetrofitClient() {
     }
 
+    /**
+     * Method to return a single retrofit instance
+     * @return
+     */
     public static Retrofit getInstance() {
         if(instance==null){
             synchronized (RetrofitClient.class){

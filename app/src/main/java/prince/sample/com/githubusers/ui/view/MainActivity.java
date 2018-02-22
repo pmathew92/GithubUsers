@@ -1,7 +1,6 @@
 package prince.sample.com.githubusers.ui.view;
 
 import android.arch.lifecycle.ViewModelProviders;
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -9,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 
 import java.util.ArrayList;
@@ -17,15 +15,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import prince.sample.com.githubusers.AppController;
 import prince.sample.com.githubusers.R;
-import prince.sample.com.githubusers.data.remote.ApiService;
 import prince.sample.com.githubusers.model.User;
 import prince.sample.com.githubusers.ui.adapter.UserListAdapter;
 import prince.sample.com.githubusers.viewmodel.MainActivityViewModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,24 +53,17 @@ public class MainActivity extends AppCompatActivity {
             mAdapter.addData(userList);
         });
 
-        ApiService apiReqInterface = ((AppController)getApplication()).getRetrofitClient().create(ApiService.class);
-
-        apiReqInterface.getUsers().enqueue(new Callback<List<User>>() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if(response.isSuccessful()){
-                    mUserList=response.body();
-                    mAdapter.addData(mUserList);
-                }
-
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
-
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return false;
             }
         });
-
-
     }
+
 }
