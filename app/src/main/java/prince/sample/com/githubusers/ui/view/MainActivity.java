@@ -11,12 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import prince.sample.com.githubusers.R;
 import prince.sample.com.githubusers.model.User;
 import prince.sample.com.githubusers.ui.adapter.UserListAdapter;
@@ -25,12 +27,11 @@ import prince.sample.com.githubusers.viewmodel.MainActivityViewModel;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    @BindView(R.id.search_view)
-    SearchView mSearchView;
-    @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.layout_loading)
-    RelativeLayout mLoading;
+    @BindView(R.id.search_view) SearchView mSearchView;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.layout_loading) RelativeLayout mLoading;
+    @BindView(R.id.layout_error) RelativeLayout mError;
+    @BindView(R.id.txt_error) TextView mErrorText;
 
     private MainActivityViewModel mViewModel;
     private List<User> mUserList = new ArrayList<>();
@@ -81,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+
+    @OnClick(R.id.btn_retry)
+    private void onReload(){
+        mViewModel.fetchUsers();
     }
 
 }

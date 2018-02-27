@@ -21,9 +21,9 @@ public class MainActivityViewModel extends AndroidViewModel{
     MainActivityViewModel(Application application){
         super(application);
         userRepository=((AppController)application).getRepository();
-        userList=userRepository.getUsers();
         setProgress=new MutableLiveData<>();
         setProgressStatus(true);
+        fetchUsers();
     }
 
     public LiveData<List<User>> getUserList(){
@@ -36,6 +36,10 @@ public class MainActivityViewModel extends AndroidViewModel{
 
     public void setProgressStatus(boolean status){
         setProgress.setValue(status);
+    }
+
+    public void fetchUsers(){
+        userList=userRepository.getUsers();
     }
 
 }
