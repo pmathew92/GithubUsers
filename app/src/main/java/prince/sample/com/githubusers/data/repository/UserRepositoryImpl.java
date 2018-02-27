@@ -50,7 +50,6 @@ public class UserRepositoryImpl implements UserRepository{
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-
             }
         });
 

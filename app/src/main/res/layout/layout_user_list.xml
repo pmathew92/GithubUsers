@@ -32,7 +32,7 @@
             android:layout_below="@id/user_name"
             android:layout_toEndOf="@id/avtar_image"
             android:layout_marginStart="@dimen/dimen_10"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"/>
 
     </RelativeLayout>
