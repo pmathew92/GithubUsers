@@ -25,7 +25,7 @@ import prince.sample.com.githubusers.ui.adapter.UserListAdapter;
 import prince.sample.com.githubusers.utils.Status;
 import prince.sample.com.githubusers.viewmodel.MainActivityViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UserListAdapter.UserListAdapterListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     @BindView(R.id.search_view)
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         if (toolbar != null)
             toolbar.setTitle(getApplicationInfo().loadLabel(getPackageManager()));
 
-        mAdapter = new UserListAdapter(this, mUserList);
+        mAdapter = new UserListAdapter(this, mUserList, mRecyclerView, this);
 
         mSearchView.setLayoutParams(new Toolbar.LayoutParams(Gravity.END));
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         mViewModel.getUserList().observe(this, resource -> {
             mViewModel.setProgressStatus(false);
-            if(resource!=null){
+            if (resource != null) {
                 if (resource.status == Status.SUCCESS)
                     mAdapter.addData(resource.data);
                 else
@@ -102,9 +102,31 @@ public class MainActivity extends AppCompatActivity {
         mViewModel.fetchUsers();
     }
 
+    /**
+     * Method to handle error screen
+     *
+     * @param msg
+     */
     private void setError(String msg) {
         mError.setVisibility(View.VISIBLE);
         mErrorText.setText(msg);
     }
 
+    @Override
+    public void onLoadMore() {
+        int id = mUserList.get(mUserList.size() - 1).getId();
+        mUserList.add(null);
+        mAdapter.notifyItemInserted(mUserList.size() - 1);
+        mViewModel.getRemainingUser(id).observe(this, resource -> {
+            mUserList.remove(mUserList.size() - 1);
+            mAdapter.notifyItemRemoved(mUserList.size());
+            if (resource != null) {
+                if (resource.status == Status.SUCCESS) {
+                    mAdapter.addData(resource.data);
+                    mAdapter.setLoaded();
+                }
+            }
+
+        });
+    }
 }

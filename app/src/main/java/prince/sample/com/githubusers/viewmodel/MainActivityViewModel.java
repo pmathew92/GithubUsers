@@ -38,9 +38,21 @@ public class MainActivityViewModel extends AndroidViewModel{
         setProgress.setValue(status);
     }
 
+    /**
+     * Method to fetch initial list of users
+     */
     public void fetchUsers(){
         setProgressStatus(true);
         userList=userRepository.getUsers();
+    }
+
+    /**
+     * Method to fetch user data for pagination since the last id available
+     * @param userId
+     * @return
+     */
+    public LiveData<Resource<List<User>>> getRemainingUser(int userId){
+        return userRepository.getRemainingUser(userId);
     }
 
 }

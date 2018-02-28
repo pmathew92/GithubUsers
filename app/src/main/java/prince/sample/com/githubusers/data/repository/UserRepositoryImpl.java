@@ -70,4 +70,9 @@ public class UserRepositoryImpl implements UserRepository{
         });
         return data;
     }
+
+    @Override
+    public LiveData<Resource<List<User>>> getRemainingUser(int userId) {
+        return null;
+    }
 }
