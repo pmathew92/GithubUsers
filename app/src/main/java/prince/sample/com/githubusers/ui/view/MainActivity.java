@@ -22,16 +22,22 @@ import butterknife.OnClick;
 import prince.sample.com.githubusers.R;
 import prince.sample.com.githubusers.model.User;
 import prince.sample.com.githubusers.ui.adapter.UserListAdapter;
+import prince.sample.com.githubusers.utils.Status;
 import prince.sample.com.githubusers.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    @BindView(R.id.search_view) SearchView mSearchView;
-    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
-    @BindView(R.id.layout_loading) RelativeLayout mLoading;
-    @BindView(R.id.layout_error) RelativeLayout mError;
-    @BindView(R.id.txt_error) TextView mErrorText;
+    @BindView(R.id.search_view)
+    SearchView mSearchView;
+    @BindView(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.layout_loading)
+    RelativeLayout mLoading;
+    @BindView(R.id.layout_error)
+    RelativeLayout mError;
+    @BindView(R.id.txt_error)
+    TextView mErrorText;
 
     private MainActivityViewModel mViewModel;
     private List<User> mUserList = new ArrayList<>();
@@ -57,14 +63,19 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
-        mViewModel.getUserList().observe(this, userList -> {
+        mViewModel.getUserList().observe(this, resource -> {
             mViewModel.setProgressStatus(false);
-            mAdapter.addData(userList);
+            if(resource!=null){
+                if (resource.status == Status.SUCCESS)
+                    mAdapter.addData(resource.data);
+                else
+                    setError(resource.message);
+            }
         });
 
 
         mViewModel.getProgressStatus().observe(this, isLoading -> {
-            if (isLoading!=null && isLoading)
+            if (isLoading != null && isLoading)
                 mLoading.setVisibility(View.VISIBLE);
             else
                 mLoading.setVisibility(View.GONE);
@@ -86,8 +97,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     @OnClick(R.id.btn_retry)
-    private void onReload(){
+    public void onReload() {
+        mError.setVisibility(View.GONE);
         mViewModel.fetchUsers();
+    }
+
+    private void setError(String msg) {
+        mError.setVisibility(View.VISIBLE);
+        mErrorText.setText(msg);
     }
 
 }

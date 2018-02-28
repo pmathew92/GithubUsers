@@ -1,4 +1,4 @@
-package prince.sample.com.githubusers.Utils;
+package prince.sample.com.githubusers.utils;
 
 
 public enum Status {

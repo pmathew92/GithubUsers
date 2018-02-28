@@ -6,8 +6,9 @@ import android.arch.lifecycle.LiveData;
 import java.util.List;
 
 import prince.sample.com.githubusers.model.User;
+import prince.sample.com.githubusers.utils.Resource;
 
 public interface UserRepository {
 
-    LiveData<List<User>> getUsers();
+    LiveData<Resource<List<User>>> getUsers();
 }

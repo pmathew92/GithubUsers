@@ -11,22 +11,22 @@ import java.util.List;
 import prince.sample.com.githubusers.AppController;
 import prince.sample.com.githubusers.data.repository.UserRepository;
 import prince.sample.com.githubusers.model.User;
+import prince.sample.com.githubusers.utils.Resource;
 
 
 public class MainActivityViewModel extends AndroidViewModel{
 
-    private LiveData<List<User>> userList;
+    private LiveData<Resource<List<User>>> userList;
     private MutableLiveData<Boolean> setProgress;
     private UserRepository userRepository;
     MainActivityViewModel(Application application){
         super(application);
         userRepository=((AppController)application).getRepository();
         setProgress=new MutableLiveData<>();
-        setProgressStatus(true);
         fetchUsers();
     }
 
-    public LiveData<List<User>> getUserList(){
+    public LiveData<Resource<List<User>>> getUserList(){
         return userList;
     }
 
@@ -39,6 +39,7 @@ public class MainActivityViewModel extends AndroidViewModel{
     }
 
     public void fetchUsers(){
+        setProgressStatus(true);
         userList=userRepository.getUsers();
     }
 
