@@ -8,6 +8,10 @@ import static prince.sample.com.githubusers.utils.Status.ERROR;
 import static prince.sample.com.githubusers.utils.Status.LOADING;
 import static prince.sample.com.githubusers.utils.Status.SUCCESS;
 
+/**
+ * Wrapper class for API results and errors
+ * @param <T>
+ */
 public class Resource<T> {
 
     @NonNull

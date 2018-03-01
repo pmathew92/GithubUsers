@@ -4,6 +4,9 @@ package prince.sample.com.githubusers.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * User POJO class
+ */
 public class User {
 
     @SerializedName("login")

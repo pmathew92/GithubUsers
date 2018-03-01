@@ -54,13 +54,14 @@ public class MainActivity extends AppCompatActivity implements UserListAdapter.U
         if (toolbar != null)
             toolbar.setTitle(getApplicationInfo().loadLabel(getPackageManager()));
 
-        mAdapter = new UserListAdapter(this, mUserList, mRecyclerView, this);
-
         mSearchView.setLayoutParams(new Toolbar.LayoutParams(Gravity.END));
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter = new UserListAdapter(this, mUserList, mRecyclerView, this);
+
         mRecyclerView.setAdapter(mAdapter);
 
         mViewModel.getUserList().observe(this, resource -> {

@@ -13,7 +13,9 @@ import prince.sample.com.githubusers.data.repository.UserRepository;
 import prince.sample.com.githubusers.model.User;
 import prince.sample.com.githubusers.utils.Resource;
 
-
+/**
+ * ViewModel class for the MainActivity class
+ */
 public class MainActivityViewModel extends AndroidViewModel{
 
     private LiveData<Resource<List<User>>> userList;
@@ -26,14 +28,26 @@ public class MainActivityViewModel extends AndroidViewModel{
         fetchUsers();
     }
 
+    /**
+     * Method to return initial list of users
+     * @return
+     */
     public LiveData<Resource<List<User>>> getUserList(){
         return userList;
     }
 
+    /**
+     * Method to return status of loading progress
+     * @return
+     */
     public LiveData<Boolean> getProgressStatus(){
         return setProgress;
     }
 
+    /**
+     * Method to set whether loading completed or not
+     * @param status
+     */
     public void setProgressStatus(boolean status){
         setProgress.setValue(status);
     }

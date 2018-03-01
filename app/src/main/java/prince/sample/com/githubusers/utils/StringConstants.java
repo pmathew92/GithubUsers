@@ -1,7 +1,9 @@
 package prince.sample.com.githubusers.utils;
 
 
-
+/**
+ * String constant class
+ */
 public class StringConstants {
 
     private StringConstants(){}

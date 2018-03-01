@@ -22,29 +22,38 @@ import prince.sample.com.githubusers.GlideApp;
 import prince.sample.com.githubusers.R;
 import prince.sample.com.githubusers.model.User;
 
-
+/**
+ * Adapter class for the recycler view
+ */
 public class UserListAdapter extends RecyclerView.Adapter implements Filterable {
 
     private Context context;
-    private List<User> userList=new ArrayList<>();
-    private List<User> userListFiltered=new ArrayList<>();
+    private List<User> userList = new ArrayList<>();
+    private List<User> userListFiltered = new ArrayList<>();
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
     private UserListAdapterListener adapterListener;
 
-    public UserListAdapter(Context context,List<User> userList, RecyclerView recyclerView
-            ,UserListAdapterListener adapterListener ){
-        this.context=context;
-        this.userList=userList;
-        this.adapterListener=adapterListener;
+    /**
+     * Constructor for the adapter.Pagination logic is handled here
+     * @param context
+     * @param userList
+     * @param recyclerView
+     * @param adapterListener
+     */
+    public UserListAdapter(Context context, List<User> userList, RecyclerView recyclerView
+            , UserListAdapterListener adapterListener) {
+        this.context = context;
+        this.userList = userList;
+        this.adapterListener = adapterListener;
         final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                totalItemCount=linearLayoutManager.getItemCount();
-                lastVisibleItem=linearLayoutManager.findLastVisibleItemPosition();
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
                     if (adapterListener != null) {
                         adapterListener.onLoadMore();
@@ -53,8 +62,8 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
                 }
             }
         });
-
     }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -72,16 +81,16 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (holder instanceof UserListViewHolder){
-            User user=userListFiltered.get(position);
-            ((UserListViewHolder)holder).mUserName.setText(user.getLogin());
-            ((UserListViewHolder)holder).mUrl.setText(user.getHtmlUrl());
+        if (holder instanceof UserListViewHolder) {
+            User user = userListFiltered.get(position);
+            ((UserListViewHolder) holder).mUserName.setText(user.getLogin());
+            ((UserListViewHolder) holder).mUrl.setText(user.getHtmlUrl());
             GlideApp.with(context)
                     .load(user.getAvatarUrl())
                     .placeholder(R.drawable.ic_github)
                     .centerCrop()
-                    .into(((UserListViewHolder)holder).mUserAvtar);
-        }else{
+                    .into(((UserListViewHolder) holder).mUserAvtar);
+        } else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
         }
 
@@ -89,7 +98,7 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
 
     @Override
     public int getItemCount() {
-        return userListFiltered.size();
+        return userListFiltered!=null?userListFiltered.size():0;
     }
 
     @Override
@@ -99,11 +108,12 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
 
     /**
      * Method to update the userList with the new list
+     *
      * @param userList
      */
     public void addData(List<User> userList) {
         this.userList.addAll(userList);
-        this.userListFiltered=this.userList;
+        this.userListFiltered = this.userList;
         notifyDataSetChanged();
     }
 
@@ -112,9 +122,11 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
+                loading=true;
                 String charString = constraint.toString();
                 if (charString.isEmpty()) {
                     userListFiltered = userList;
+                    loading=false;
                 } else {
                     List<User> filteredList = new ArrayList<>();
                     for (User row : userList) {
@@ -133,24 +145,31 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                userListFiltered= (List<User>) results.values;
+                userListFiltered = (List<User>) results.values;
                 notifyDataSetChanged();
             }
         };
     }
 
+    /**
+     * Method to set pagination loading status to false
+     */
     public void setLoaded() {
         loading = false;
     }
 
-    class UserListViewHolder extends RecyclerView.ViewHolder{
+    class UserListViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.user_name) TextView mUserName;
-        @BindView(R.id.user_url)   TextView mUrl;
-        @BindView(R.id.avtar_image) ImageView mUserAvtar;
+        @BindView(R.id.user_name)
+        TextView mUserName;
+        @BindView(R.id.user_url)
+        TextView mUrl;
+        @BindView(R.id.avtar_image)
+        ImageView mUserAvtar;
+
         UserListViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 
@@ -165,7 +184,10 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
     }
 
 
-    public interface UserListAdapterListener{
+    /**
+     * Callback to inform activity to fetch more data from API
+     */
+    public interface UserListAdapterListener {
 
         void onLoadMore();
     }

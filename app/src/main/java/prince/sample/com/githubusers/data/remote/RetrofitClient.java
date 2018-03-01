@@ -4,6 +4,9 @@ package prince.sample.com.githubusers.data.remote;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Singleton class to create Retrofit instance
+ */
 public class RetrofitClient {
     private static final String BASE_URL="https://api.github.com/";
     private static  Retrofit instance=null;
