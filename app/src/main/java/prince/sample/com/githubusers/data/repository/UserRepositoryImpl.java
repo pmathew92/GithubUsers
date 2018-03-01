@@ -11,6 +11,7 @@ import java.util.List;
 import prince.sample.com.githubusers.AppController;
 import prince.sample.com.githubusers.data.remote.ApiService;
 import prince.sample.com.githubusers.model.User;
+import prince.sample.com.githubusers.utils.ConnectionManager;
 import prince.sample.com.githubusers.utils.Resource;
 import prince.sample.com.githubusers.utils.StringConstants;
 import retrofit2.Call;
@@ -24,9 +25,11 @@ public class UserRepositoryImpl implements UserRepository{
 
     private final ApiService apiReqInterface;
     private static  UserRepositoryImpl instance;
+    private ConnectionManager connectionManager;
 
     private UserRepositoryImpl(final Context context){
         apiReqInterface= ((AppController)context).getRetrofitClient().create(ApiService.class);
+        connectionManager=new ConnectionManager(context);
     }
 
     /**
@@ -73,7 +76,10 @@ public class UserRepositoryImpl implements UserRepository{
 
             @Override
             public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable t) {
-                data.postValue(Resource.error(t.getLocalizedMessage(),null));
+                if(connectionManager.isNetworkAvailable())
+                    data.postValue(Resource.error(t.getLocalizedMessage(),null));
+                else
+                    data.postValue(Resource.error(StringConstants.NO_INTERNET,null));
             }
         });
         return data;
@@ -103,8 +109,11 @@ public class UserRepositoryImpl implements UserRepository{
             }
 
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                data.postValue(Resource.error(t.getLocalizedMessage(),null));
+            public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable t) {
+                if(connectionManager.isNetworkAvailable())
+                    data.postValue(Resource.error(t.getLocalizedMessage(),null));
+                else
+                    data.postValue(Resource.error(StringConstants.NO_INTERNET,null));
             }
         });
         return data;

@@ -5,6 +5,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 
 import java.util.List;
 
@@ -20,12 +21,16 @@ public class MainActivityViewModel extends AndroidViewModel{
 
     private LiveData<Resource<List<User>>> userList;
     private MutableLiveData<Boolean> setProgress;
+    private MutableLiveData<Void> retrycallObservable;
     private UserRepository userRepository;
     MainActivityViewModel(Application application){
         super(application);
         userRepository=((AppController)application).getRepository();
         setProgress=new MutableLiveData<>();
+        retrycallObservable=new MutableLiveData<>();
         fetchUsers();
+        userList= Transformations.switchMap(retrycallObservable,input->
+            userRepository.getUsers());
     }
 
     /**
@@ -57,7 +62,7 @@ public class MainActivityViewModel extends AndroidViewModel{
      */
     public void fetchUsers(){
         setProgressStatus(true);
-        userList=userRepository.getUsers();
+        retrycallObservable.setValue(null);
     }
 
     /**

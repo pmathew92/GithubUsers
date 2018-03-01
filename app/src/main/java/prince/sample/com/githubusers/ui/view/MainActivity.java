@@ -1,7 +1,9 @@
 package prince.sample.com.githubusers.ui.view;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -115,19 +117,27 @@ public class MainActivity extends AppCompatActivity implements UserListAdapter.U
 
     @Override
     public void onLoadMore() {
-        int id = mUserList.get(mUserList.size() - 1).getId();
-        mUserList.add(null);
-        mAdapter.notifyItemInserted(mUserList.size() - 1);
-        mViewModel.getRemainingUser(id).observe(this, resource -> {
+        if (mUserList.get(mUserList.size() - 1) == null)
             mUserList.remove(mUserList.size() - 1);
-            mAdapter.notifyItemRemoved(mUserList.size());
-            if (resource != null) {
-                if (resource.status == Status.SUCCESS) {
-                    mAdapter.addData(resource.data);
-                    mAdapter.setLoaded();
+        int id = mUserList.get(mUserList.size() - 1).getId();
+        LifecycleOwner owner = this;
+        new Handler().post(() -> {
+            mUserList.add(null);
+            mAdapter.notifyItemInserted(mUserList.size() - 1);
+            mViewModel.getRemainingUser(id).observe(owner, resource -> {
+                if (resource != null) {
+                    if (resource.status == Status.SUCCESS) {
+                        mUserList.remove(mUserList.size() - 1);
+                        mAdapter.notifyItemRemoved(mUserList.size());
+                        mAdapter.addData(resource.data);
+                        mAdapter.setLoaded();
+                    } else {
+                        mAdapter.setProgressError(true, resource.message);
+                    }
                 }
-            }
 
+            });
         });
+
     }
 }

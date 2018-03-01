@@ -20,6 +20,7 @@ public class AppController extends Application {
     public UserRepositoryImpl getRepository(){
         return UserRepositoryImpl.getInstance(this);
     }
+
 }
 
 

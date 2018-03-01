@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,11 +34,13 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
     private List<User> userListFiltered = new ArrayList<>();
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
-    private boolean loading;
+    private boolean error,loading;
+    private String errorMsg;
     private UserListAdapterListener adapterListener;
 
     /**
      * Constructor for the adapter.Pagination logic is handled here
+     *
      * @param context
      * @param userList
      * @param recyclerView
@@ -91,14 +95,26 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
                     .centerCrop()
                     .into(((UserListViewHolder) holder).mUserAvtar);
         } else {
-            ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+            if(error){
+                ((ProgressViewHolder) holder).progressBar.setVisibility(View.GONE);
+                ((ProgressViewHolder)holder).errorLayout.setVisibility(View.VISIBLE);
+                ((ProgressViewHolder)holder).errorMsg.setText(errorMsg);
+                ((ProgressViewHolder)holder).refresh.setOnClickListener(view->{
+                    error=false;
+                    adapterListener.onLoadMore();
+                });
+            }else {
+                ((ProgressViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
+                ((ProgressViewHolder)holder).errorLayout.setVisibility(View.GONE);
+                ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+            }
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return userListFiltered!=null?userListFiltered.size():0;
+        return userListFiltered != null ? userListFiltered.size() : 0;
     }
 
     @Override
@@ -122,11 +138,11 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                loading=true;
+                loading = true;
                 String charString = constraint.toString();
                 if (charString.isEmpty()) {
                     userListFiltered = userList;
-                    loading=false;
+                    loading = false;
                 } else {
                     List<User> filteredList = new ArrayList<>();
                     for (User row : userList) {
@@ -158,6 +174,17 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
         loading = false;
     }
 
+    /**
+     * Method to set error screen when pagination error occurs
+     * @param errorStatus
+     * @param message
+     */
+    public void setProgressError(boolean errorStatus,String message){
+        this.error=errorStatus;
+        this.errorMsg=message;
+        notifyDataSetChanged();
+    }
+
     class UserListViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.user_name)
@@ -176,6 +203,12 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
     class ProgressViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.progressBar)
         ProgressBar progressBar;
+        @BindView(R.id.layout_progress_error)
+        LinearLayout errorLayout;
+        @BindView(R.id.txt_error_msg)
+        TextView errorMsg;
+        @BindView(R.id.btn_refresh)
+        Button refresh;
 
         ProgressViewHolder(View itemView) {
             super(itemView);
