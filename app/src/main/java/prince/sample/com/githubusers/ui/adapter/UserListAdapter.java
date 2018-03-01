@@ -100,13 +100,12 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
                 ((ProgressViewHolder)holder).errorLayout.setVisibility(View.VISIBLE);
                 ((ProgressViewHolder)holder).errorMsg.setText(errorMsg);
                 ((ProgressViewHolder)holder).refresh.setOnClickListener(view->{
-                    error=false;
+                    setProgressError(false,null);
                     adapterListener.onLoadMore();
                 });
             }else {
                 ((ProgressViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
                 ((ProgressViewHolder)holder).errorLayout.setVisibility(View.GONE);
-                ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
             }
         }
 
@@ -119,7 +118,7 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
 
     @Override
     public int getItemViewType(int position) {
-        return userList.get(position) != null ? 1 : 0;
+        return position == (userList.size()-1) ? 0 : 1;
     }
 
     /**
@@ -182,7 +181,7 @@ public class UserListAdapter extends RecyclerView.Adapter implements Filterable 
     public void setProgressError(boolean errorStatus,String message){
         this.error=errorStatus;
         this.errorMsg=message;
-        notifyDataSetChanged();
+        notifyItemChanged(userList.size()-1);
     }
 
     class UserListViewHolder extends RecyclerView.ViewHolder {

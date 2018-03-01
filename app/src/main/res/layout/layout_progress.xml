@@ -26,8 +26,8 @@
             android:textColor="@android:color/black"/>
         <Button
             android:id="@+id/btn_refresh"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/dimen_40"
+            android:layout_height="@dimen/dimen_40"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dimen_5"
             android:background="@drawable/ic_refresh"/>

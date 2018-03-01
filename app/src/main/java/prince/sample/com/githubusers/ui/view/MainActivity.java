@@ -117,27 +117,19 @@ public class MainActivity extends AppCompatActivity implements UserListAdapter.U
 
     @Override
     public void onLoadMore() {
-        if (mUserList.get(mUserList.size() - 1) == null)
-            mUserList.remove(mUserList.size() - 1);
         int id = mUserList.get(mUserList.size() - 1).getId();
         LifecycleOwner owner = this;
-        new Handler().post(() -> {
-            mUserList.add(null);
-            mAdapter.notifyItemInserted(mUserList.size() - 1);
-            mViewModel.getRemainingUser(id).observe(owner, resource -> {
-                if (resource != null) {
-                    if (resource.status == Status.SUCCESS) {
-                        mUserList.remove(mUserList.size() - 1);
-                        mAdapter.notifyItemRemoved(mUserList.size());
-                        mAdapter.addData(resource.data);
-                        mAdapter.setLoaded();
-                    } else {
-                        mAdapter.setProgressError(true, resource.message);
-                    }
+        new Handler().post(() -> mViewModel.getRemainingUser(id).observe(owner, resource -> {
+            if (resource != null) {
+                if (resource.status == Status.SUCCESS) {
+                    mAdapter.addData(resource.data);
+                    mAdapter.setLoaded();
+                } else {
+                    mAdapter.setProgressError(true, resource.message);
                 }
+            }
 
-            });
-        });
+        }));
 
     }
 }
