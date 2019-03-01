@@ -1,2 +1,3 @@
 # GithubUsers
-Sample app displaying all Github users using architecture componenets and Retrofit2 . Kotlin version of the same is also added with arch-components , Dagger2 ,RxJava2.
+Sample app displaying all Github users using architecture components and Retrofit2 . Kotlin version of the same is also added with  Dagger2 ,RxJava2 and
+Paging Library

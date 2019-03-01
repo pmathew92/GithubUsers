@@ -42,6 +42,8 @@ class UsersActivity : AppCompatActivity() {
 
         mBinding.viewModel = viewModel
 
+        mBinding.setLifecycleOwner(this)
+
         observeData()
     }
 

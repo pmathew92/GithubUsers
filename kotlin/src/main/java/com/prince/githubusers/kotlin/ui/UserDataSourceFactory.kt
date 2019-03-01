@@ -6,12 +6,17 @@ import com.prince.githubusers.kotlin.model.User
 import javax.inject.Inject
 
 
-class UserDataSourceFactory @Inject constructor(val userDataSource: UserDataSource) : DataSource.Factory<Int, User>() {
+class UserDataSourceFactory @Inject constructor(private val userDataSource: UserDataSource) : DataSource.Factory<Int, User>() {
 
-    val userDataSourceLiveData = MutableLiveData<UserDataSource>()
+    private val userDataSourceLiveData = MutableLiveData<UserDataSource>()
 
     override fun create(): DataSource<Int, User> {
         userDataSourceLiveData.postValue(userDataSource)
         return userDataSource
+    }
+
+
+    fun getDataFactoryLiveData(): MutableLiveData<UserDataSource> {
+        return userDataSourceLiveData;
     }
 }
