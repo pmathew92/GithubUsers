@@ -11,7 +11,7 @@ class UserDataSourceFactory @Inject constructor(val userDataSource: UserDataSour
     val userDataSourceLiveData = MutableLiveData<UserDataSource>()
 
     override fun create(): DataSource<Int, User> {
-        userDataSourceLiveData.value = userDataSource
+        userDataSourceLiveData.postValue(userDataSource)
         return userDataSource
     }
 }

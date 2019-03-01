@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prince.githubusers.kotlin.R
@@ -12,6 +13,7 @@ import com.prince.githubusers.kotlin.model.User
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_users.*
 import kotlinx.android.synthetic.main.content_users.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class UsersActivity : AppCompatActivity() {
@@ -45,9 +47,14 @@ class UsersActivity : AppCompatActivity() {
 
 
     fun observeData() {
-        viewModel.getUsers().observe(this, Observer<List<User>> {
+//        viewModel.getUsers().observe(this, Observer<List<User>> {
+//            mAdapter.submitList(it)
+////            mAdapter.addData(it)
+//        })
+
+        viewModel.getUserLists().observe(this, Observer<PagedList<User>> {
+            Timber.d("Observer called ${it.size}")
             mAdapter.submitList(it)
-//            mAdapter.addData(it)
         })
     }
 }

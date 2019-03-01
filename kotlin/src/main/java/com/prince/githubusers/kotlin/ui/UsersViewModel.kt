@@ -4,23 +4,34 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.prince.githubusers.kotlin.data.repository.UserRepository
 import com.prince.githubusers.kotlin.model.User
 import io.reactivex.android.schedulers.AndroidSchedulers
 import timber.log.Timber
 
-class UsersViewModel(private val userRepository: UserRepository) : ViewModel() {
+class UsersViewModel(private val userRepository: UserRepository,
+                     userDataSourceFactory: UserDataSourceFactory) : ViewModel() {
 
     private var userId = 0
 
     private var userList: MutableLiveData<List<User>> = MutableLiveData()
+    private var userLists: LiveData<PagedList<User>>
     private var loading: ObservableBoolean = ObservableBoolean(false)
     private var error: ObservableBoolean = ObservableBoolean(false)
 
     private var loadingFirstTime = true
 
+
     init {
-        fetchUsers()
+        val config = PagedList.Config.Builder()
+                .setEnablePlaceholders(PAGED_LIST_ENABLE_PLACEHOLDERS)
+                .setPageSize(PAGED_LIST_PAGE_SIZE)
+                .setInitialLoadSizeHint(PAGED_LIST_PAGE_SIZE * 2)
+                .build()
+
+        userLists = LivePagedListBuilder<Int, User>(userDataSourceFactory, config).build()
     }
 
     /**
@@ -28,6 +39,10 @@ class UsersViewModel(private val userRepository: UserRepository) : ViewModel() {
      */
     fun getUsers(): LiveData<List<User>> {
         return userList
+    }
+
+    fun getUserLists(): LiveData<PagedList<User>> {
+        return userLists
     }
 
     fun isLoading(): ObservableBoolean {
@@ -45,7 +60,7 @@ class UsersViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun reload() {
         error.set(false)
         loadingFirstTime = true
-        getUsers()
+        fetchUsers()
     }
 
     /**

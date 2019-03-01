@@ -16,7 +16,7 @@ class UserDataSource @Inject constructor(val apiService: ApiService) : ItemKeyed
                 .subscribe({ response ->
                     callback.onResult(response, 0, response.size)
                 }, { error ->
-                    Timber.d("Error")
+                    Timber.e(error, "Error Initial")
                 })
     }
 
@@ -25,7 +25,7 @@ class UserDataSource @Inject constructor(val apiService: ApiService) : ItemKeyed
                 .subscribe({ response ->
                     callback.onResult(response)
                 }, { error ->
-                    Timber.d("Error ")
+                    Timber.e(error, "Error After ")
                 }
                 )
     }
