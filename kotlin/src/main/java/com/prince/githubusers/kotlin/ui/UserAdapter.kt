@@ -5,13 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.prince.githubusers.kotlin.R
 import com.prince.githubusers.kotlin.model.User
 import timber.log.Timber
 import java.util.*
 
-class UserAdapter(private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class UserAdapter(private val context: Context) : ListAdapter<User, RecyclerView.ViewHolder>(DIFF_UTIL) {
 
     private val userList: MutableList<User> = ArrayList()
 
@@ -27,18 +29,14 @@ class UserAdapter(private val context: Context) : RecyclerView.Adapter<RecyclerV
         return viewHolder
     }
 
-    override fun getItemCount(): Int {
-        return userList.size
-    }
-
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == userList.size - 1) 0 else 1
+        return if (position == itemCount - 1) 0 else 1
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is UserViewHolder) {
-            holder.bind(userList.get(holder.adapterPosition))
+            holder.bind(getItem(holder.adapterPosition))
         } else {
 
         }
@@ -59,5 +57,18 @@ class UserAdapter(private val context: Context) : RecyclerView.Adapter<RecyclerV
 
     inner class ProgressViewHolder(@NonNull private val binding: com.prince.githubusers.kotlin.databinding.LayoutProgressBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    }
+
+
+    companion object {
+        private val DIFF_UTIL = object : DiffUtil.ItemCallback<User>() {
+            override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+                return newItem == oldItem
+            }
+        }
     }
 }

@@ -22,8 +22,8 @@ android {
         }
     }
 
-    dataBinding{
-        enabled=true
+    dataBinding {
+        enabled = true
     }
 
 }
@@ -46,6 +46,7 @@ dependencies {
     //arch components
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.lifecycle_version"
+    implementation 'androidx.paging:paging-runtime:2.1.0'
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'

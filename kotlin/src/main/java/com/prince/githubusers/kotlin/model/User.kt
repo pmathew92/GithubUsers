@@ -6,49 +6,49 @@ import com.google.gson.annotations.SerializedName
 data class User(
         @SerializedName("login")
         @Expose
-         var login: String? = null,
+        var login: String? = null,
         @SerializedName("id")
         @Expose
-         var id: Int = 0,
+        var id: Int = 0,
         @SerializedName("avatar_url")
         @Expose
-         var avatarUrl: String? = null,
+        var avatarUrl: String? = null,
         @SerializedName("gravatar_id")
         @Expose
-         var gravatarId: String? = null,
+        var gravatarId: String? = null,
         @SerializedName("url")
         @Expose
-         var url: String? = null,
+        var url: String? = null,
         @SerializedName("html_url")
         @Expose
-         var htmlUrl: String? = null,
+        var htmlUrl: String? = null,
         @SerializedName("followers_url")
         @Expose
-         var followersUrl: String? = null,
+        var followersUrl: String? = null,
         @SerializedName("following_url")
         @Expose
-         var followingUrl: String? = null,
+        var followingUrl: String? = null,
         @SerializedName("gists_url")
         @Expose
-         var gistsUrl: String? = null,
+        var gistsUrl: String? = null,
         @SerializedName("starred_url")
         @Expose
-         var starredUrl: String? = null,
+        var starredUrl: String? = null,
         @SerializedName("subscriptions_url")
         @Expose
-         var subscriptionsUrl: String? = null,
+        var subscriptionsUrl: String? = null,
         @SerializedName("organizations_url")
         @Expose
-         var organizationsUrl: String? = null,
+        var organizationsUrl: String? = null,
         @SerializedName("repos_url")
         @Expose
-         var reposUrl: String? = null,
+        var reposUrl: String? = null,
         @SerializedName("events_url")
         @Expose
-         var eventsUrl: String? = null,
+        var eventsUrl: String? = null,
         @SerializedName("received_events_url")
         @Expose
-         var receivedEventsUrl: String? = null,
+        var receivedEventsUrl: String? = null,
         @SerializedName("type")
         @Expose
         private var type: String? = null,

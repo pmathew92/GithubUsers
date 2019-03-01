@@ -17,10 +17,14 @@ import javax.inject.Inject
 class UsersActivity : AppCompatActivity() {
     @Inject
     lateinit var factory: UserViewModelFactory
-    private lateinit var viewModel: UsersViewModel
+    private val viewModel by lazy {
+        ViewModelProviders.of(this, factory).get(UsersViewModel::class.java)
+    }
 
     private lateinit var mBinding: com.prince.githubusers.kotlin.databinding.ActivityUsersBinding
-    private lateinit var mAdapter: UserAdapter
+
+    @Inject
+    lateinit var mAdapter: UserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -28,13 +32,9 @@ class UsersActivity : AppCompatActivity() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_users)
         setSupportActionBar(toolbar)
 
-        viewModel = ViewModelProviders.of(this, factory).get(UsersViewModel::class.java)
-
         recycler_view.setHasFixedSize(true)
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.itemAnimator = DefaultItemAnimator()
-
-        mAdapter = UserAdapter(this)
 
         recycler_view.adapter = mAdapter
 
@@ -46,7 +46,8 @@ class UsersActivity : AppCompatActivity() {
 
     fun observeData() {
         viewModel.getUsers().observe(this, Observer<List<User>> {
-            mAdapter.addData(it)
+            mAdapter.submitList(it)
+//            mAdapter.addData(it)
         })
     }
 }

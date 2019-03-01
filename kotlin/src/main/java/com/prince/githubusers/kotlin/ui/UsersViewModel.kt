@@ -68,4 +68,10 @@ class UsersViewModel(private val userRepository: UserRepository) : ViewModel() {
                     Timber.e(err, "Error fetching data")
                 })
     }
+
+
+    companion object {
+        private const val PAGED_LIST_PAGE_SIZE = 20
+        private const val PAGED_LIST_ENABLE_PLACEHOLDERS = false
+    }
 }
